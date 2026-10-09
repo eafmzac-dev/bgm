@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Control Docente - Modo Aula (iPad / Legacy)</title>
+  <!-- Metas PWA y Pantalla Completa para iPad Mini 1 (iOS 9.3.5 / Safari 9) -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Control Aula">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-icon" href="logoGBM.svg">
+  <link rel="icon" type="image/svg+xml" href="logoGBM.svg">
+
+  <style>
+    /* Estilos Clásicos Compatibles al 100% con Safari 9 / iOS 9.3.5 */
+    * {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+    body {
+      font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      line-height: 1.4;
+      font-size: 15px;
+      -webkit-text-size-adjust: 100%;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    input, select, textarea, button {
+      font-family: inherit;
+      font-size: 14px;
+      -webkit-appearance: none;
+      border-radius: 6px;
+    }
+
+    /* Barra Superior Docente */
+    .top-header {
+      background-color: #1e1b4b;
+      background-image: -webkit-linear-gradient(top, #1e1b4b, #312e81);
+      color: #ffffff;
+      padding: 10px 14px;
+      border-bottom: 2px solid #4338ca;
+    }
+    .header-row {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .brand-title {
+      font-size: 17px;
+      font-weight: bold;
+      letter-spacing: -0.3px;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: #c7d2fe;
+      margin-top: 2px;
+    }
+    .badge-legacy {
+      background-color: #4338ca;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid #6366f1;
+      display: inline-block;
+    }
+
+    /* Barra de Contexto (Asignatura, Grupo, Fecha) */
+    .context-bar {
+      background-color: #ffffff;
+      padding: 8px 12px;
+      border-bottom: 1px solid #cbd5e1;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-flex-wrap: wrap;
+      flex-wrap: wrap;
+      gap: 8px;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .selector-item {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      gap: 5px;
+    }
+    .selector-label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #475569;
+    }
+    .selector-item select, .selector-item input {
+      padding: 6px 10px;
+      border: 1px solid #94a3b8;
+      background-color: #f8fafc;
+      font-weight: bold;
+      color: #1e293b;
+    }
+
+    /* Pestañas de Navegación */
+    .nav-tabs {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      background-color: #312e81;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-bottom: 2px solid #4338ca;
+    }
+    .nav-tab {
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+      min-width: 100px;
+      text-align: center;
+      padding: 10px 4px;
+      color: #c7d2fe;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+    }
+    .nav-tab.active {
+      color: #ffffff;
+      background-color: #1e1b4b;
+      border-bottom-color: #38bdf8;
+    }
+
+    /* Contenedor Principal */
+    .container {
+      padding: 12px;
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+    .card {
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #1e293b;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+
+    /* Botones y Acciones */
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      line-height: 1.2;
+    }
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .btn-primary {
+      background-color: #4338ca;
+      color: #ffffff;
+      border-color: #3730a3;
+    }
+    .btn-success {
+      background-color: #059669;
+      color: #ffffff;
+      border-color: #047857;
+    }
+    .btn-warning {
+      background-color: #d97706;
+      color: #ffffff;
+      border-color: #b45309;
+    }
+    .btn-danger {
+      background-color: #dc2626;
+      color: #ffffff;
+      border-color: #b91c1c;
+    }
+    .btn-slate {
+      background-color: #475569;
+      color: #ffffff;
+      border-color: #334155;
+    }
+    .btn-light {
+      background-color: #f1f5f9;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+
+    /* Tabla y Lista de Alumnos */
+    .student-row {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      padding: 10px 8px;
+      border-bottom: 1px solid #e2e8f0;
+      background-color: #ffffff;
+    }
+    .student-row:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .student-info {
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+      margin-right: 8px;
+    }
+    .student-num {
+      display: inline-block;
+      width: 24px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #64748b;
+    }
+    .student-name {
+      font-weight: bold;
+      font-size: 14px;
+      color: #0f172a;
+    }
+
+    /* Botones de Asistencia Cuadrados Grandes */
+    .att-buttons {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 5px;
+    }
+    .att-btn {
+      width: 44px;
+      height: 40px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      border: 1px solid #cbd5e1;
+      background-color: #f8fafc;
+      color: #64748b;
+      cursor: pointer;
+      text-align: center;
+      line-height: 38px;
+    }
+    .att-btn.active-p {
+      background-color: #10b981;
+      color: #ffffff;
+      border-color: #059669;
+    }
+    .att-btn.active-f {
+      background-color: #ef4444;
+      color: #ffffff;
+      border-color: #dc2626;
+    }
+    .att-btn.active-r {
+      background-color: #f59e0b;
+      color: #ffffff;
+      border-color: #d97706;
+    }
+    .att-btn.active-j {
+      background-color: #3b82f6;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    /* Contador de Participaciones */
+    .part-box {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      gap: 3px;
+      margin-left: 8px;
+    }
+    .part-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      font-weight: bold;
+      background-color: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      font-size: 16px;
+      color: #334155;
+      line-height: 28px;
+    }
+    .part-count {
+      min-width: 22px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 13px;
+      color: #4338ca;
+    }
+
+    /* Resumen rápido métricas */
+    .metrics-bar {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .metric-item {
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+      padding: 8px 4px;
+      border-radius: 6px;
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+    .metric-num {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .metric-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: #64748b;
+    }
+
+    /* Modal / Toast emergente */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      background-color: #1e1b4b;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 9999;
+      display: none;
+      text-align: center;
+      border: 1px solid #4338ca;
+    }
+
+    /* Estilos Baño Timer */
+    .timer-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .timer-normal {
+      background-color: #dbeafe;
+      color: #1e40af;
+    }
+    .timer-exceeded {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #f87171;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Encabezado Maestro -->
+  <div class="top-header">
+    <div class="header-row">
+      <div>
+        <div class="brand-title">Control Docente - Modo Aula</div>
+        <div class="brand-sub" id="lblEscuela">Bachillerato General Multidisciplinario</div>
+      </div>
+      <div>
+        <span class="badge-legacy">iPad Mini 1 (iOS 9)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Barra de Contexto (Asignatura, Grupo, Fecha) -->
+  <div class="context-bar">
+    <div class="selector-item">
+      <span class="selector-label">Materia:</span>
+      <select id="selAsignatura" onchange="cambiarAsignatura()"></select>
+    </div>
+    <div class="selector-item">
+      <span class="selector-label">Grupo:</span>
+      <select id="selGrupo" onchange="cambiarGrupo()"></select>
+    </div>
+    <div class="selector-item">
+      <span class="selector-label">Fecha:</span>
+      <input type="date" id="txtFecha" onchange="cambiarFecha()">
+      <button class="btn btn-light btn-sm" onclick="setHoy()">Hoy</button>
+    </div>
+    <div class="selector-item" style="margin-left: auto;">
+      <button class="btn btn-success btn-sm" onclick="guardarTodoManual()">💾 Guardar</button>
+    </div>
+  </div>
+
+  <!-- 3. Pestañas de Navegación -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tabBtnAsistencia" onclick="cambiarTab('asistencia')">📋 Pase de Lista</button>
+    <button class="nav-tab" id="tabBtnActividades" onclick="cambiarTab('actividades')">📝 Tareas</button>
+    <button class="nav-tab" id="tabBtnBanio" onclick="cambiarTab('banio')">🚻 Baño</button>
+    <button class="nav-tab" id="tabBtnFichas" onclick="cambiarTab('fichas')">📊 Reportes</button>
+    <button class="nav-tab" id="tabBtnRespaldo" onclick="cambiarTab('respaldo')">💾 Respaldo</button>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast"></div>
+
+  <!-- 4. Contenido Principal -->
+  <div class="container">
+
+    <!-- SECCIÓN 1: PASE DE LISTA / ASISTENCIA -->
+    <div id="secAsistencia">
+      <!-- Resumen Métricas -->
+      <div class="metrics-bar">
+        <div class="metric-item" style="border-top: 3px solid #10b981;">
+          <div class="metric-num" id="cntP" style="color:#10b981;">0</div>
+          <div class="metric-label">Presentes</div>
+        </div>
+        <div class="metric-item" style="border-top: 3px solid #ef4444;">
+          <div class="metric-num" id="cntF" style="color:#ef4444;">0</div>
+          <div class="metric-label">Faltas</div>
+        </div>
+        <div class="metric-item" style="border-top: 3px solid #f59e0b;">
+          <div class="metric-num" id="cntR" style="color:#f59e0b;">0</div>
+          <div class="metric-label">Retardos</div>
+        </div>
+        <div class="metric-item" style="border-top: 3px solid #3b82f6;">
+          <div class="metric-num" id="cntJ" style="color:#3b82f6;">0</div>
+          <div class="metric-label">Justif.</div>
+        </div>
+        <div class="metric-item" style="border-top: 3px solid #4338ca;">
+          <div class="metric-num" id="cntTotal">0</div>
+          <div class="metric-label">Total</div>
+        </div>
+      </div>
+
+      <!-- Barra de Acciones de Asistencia -->
+      <div class="card" style="padding: 8px 12px; margin-bottom: 8px; display:-webkit-flex; display:flex; -webkit-justify-content:space-between; justify-content:space-between; -webkit-align-items:center; align-items:center;">
+        <div>
+          <button class="btn btn-success btn-sm" onclick="marcarTodosPresente()">⚡ Todos Presente</button>
+          <button class="btn btn-light btn-sm" onclick="limpiarAsistenciaDia()">Limpiar Día</button>
+        </div>
+        <div style="font-size: 12px; color: #64748b; font-weight: bold;" id="txtSesionInfo">
+          Sesión Activa
+        </div>
+      </div>
+
+      <!-- Lista de Alumnos para Asistencia -->
+      <div class="card" style="padding: 0;">
+        <div id="listaAlumnosAsistencia"></div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 2: TAREAS Y ACTIVIDADES -->
+    <div id="secActividades" style="display: none;">
+      <div class="card">
+        <div class="card-title">
+          <span>Catálogo de Actividades y Tareas</span>
+          <button class="btn btn-primary btn-sm" onclick="abrirModalCrearActividad()">+ Nueva Actividad</button>
+        </div>
+        <div style="margin-bottom: 10px;">
+          <span style="font-size: 12px; font-weight: bold; color: #475569;">Selecciona Actividad a Calificar:</span>
+          <select id="selActividadActiva" style="width: 100%; padding: 8px; margin-top: 4px; font-weight: bold;" onchange="renderCalificaciones()">
+          </select>
+        </div>
+      </div>
+
+      <!-- Planilla de Calificaciones -->
+      <div class="card" style="padding: 0;">
+        <div style="padding: 10px 12px; border-bottom: 1px solid #cbd5e1; background-color: #f8fafc; display:-webkit-flex; display:flex; -webkit-justify-content:space-between; justify-content:space-between; -webkit-align-items:center; align-items:center;">
+          <span style="font-weight: bold; font-size: 13px;" id="lblActividadDetalle">Calificaciones de la Actividad</span>
+          <div>
+            <button class="btn btn-success btn-sm" onclick="calificarTodos(10)">Todos 10</button>
+            <button class="btn btn-light btn-sm" onclick="calificarTodos(1)">Todos Firman (1)</button>
+          </div>
+        </div>
+        <div id="listaCalificacionesAlumnos"></div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 3: CONTROL DE SALIDAS AL BAÑO -->
+    <div id="secBanio" style="display: none;">
+      <div class="card">
+        <div class="card-title">
+          <span>Registrar Salida al Baño (Tolerancia: 5 min)</span>
+        </div>
+        <div style="display:-webkit-flex; display:flex; gap: 8px; margin-top: 6px;">
+          <select id="selAlumnoBanio" style="-webkit-flex: 1; flex: 1; padding: 8px; font-weight: bold;"></select>
+          <button class="btn btn-primary" onclick="registrarSalidaBanio()">🚹 Marcar Salida</button>
+        </div>
+      </div>
+
+      <!-- Alumnos actualmente en el baño -->
+      <div class="card">
+        <div class="card-title" style="color: #b91c1c;">
+          <span>Estudiantes Actualmente en Sanitarios</span>
+          <button class="btn btn-light btn-sm" onclick="renderBanio()">Refrescar Reloj</button>
+        </div>
+        <div id="listaBanioActivos"></div>
+      </div>
+
+      <!-- Historial de Salidas del Día -->
+      <div class="card">
+        <div class="card-title">
+          <span>Historial de Visitas al Baño (Hoy)</span>
+        </div>
+        <div id="listaBanioHistorial"></div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 4: REPORTES Y FICHAS -->
+    <div id="secFichas" style="display: none;">
+      <div class="card">
+        <div class="card-title">
+          <span>Ficha 360 y Resumen del Estudiante</span>
+        </div>
+        <div>
+          <span style="font-size: 12px; font-weight: bold; color: #475569;">Selecciona Alumno:</span>
+          <select id="selAlumnoFicha" style="width: 100%; padding: 8px; margin-top: 4px; font-weight: bold;" onchange="renderFichaDetalle()"></select>
+        </div>
+      </div>
+
+      <!-- Resumen Ficha -->
+      <div id="detalleFichaAlumno"></div>
+
+      <!-- Registrar Reporte de Indisciplina -->
+      <div class="card">
+        <div class="card-title">
+          <span>Registrar Reporte de Indisciplina / Conducta</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <label style="font-size: 12px; font-weight: bold; color: #475569;">Falta cometida:</label>
+          <select id="txtFaltaTipo" style="width: 100%; padding: 6px; margin-top: 3px;">
+            <option value="Uso indebido de celular">Uso indebido de celular en clase</option>
+            <option value="Falta de respeto o indisciplina">Falta de respeto o indisciplina</option>
+            <option value="Llegada tardía recurrente">Llegada tardía recurrente</option>
+            <option value="No realiza actividades">No realiza actividades en clase</option>
+            <option value="Salida sin autorización">Salida del aula sin autorización</option>
+            <option value="Otro">Otro motivo</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <label style="font-size: 12px; font-weight: bold; color: #475569;">Observaciones / Detalles:</label>
+          <textarea id="txtFaltaDetalles" rows="2" style="width: 100%; padding: 6px; margin-top: 3px;" placeholder="Descripción breve de los hechos..."></textarea>
+        </div>
+        <div style="text-align: right;">
+          <button class="btn btn-danger btn-sm" onclick="guardarIndisciplina()">Registrar Incidencia</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN 5: RESPALDO Y NUBE -->
+    <div id="secRespaldo" style="display: none;">
+      <div class="card">
+        <div class="card-title">
+          <span>Sincronización y Respaldo Unificado</span>
+        </div>
+        <p style="font-size: 13px; color: #475569; margin-bottom: 12px;">
+          Esta versión ligera utiliza exactamente la misma clave (<code>control_docente_workspace_v3</code>) y estructura de datos que la versión completa moderna. Puedes exportar e importar sin perder ningún dato.
+        </p>
+
+        <div style="display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; gap: 8px; margin-bottom: 14px;">
+          <button class="btn btn-success" onclick="guardarTodoManual()">💾 Guardar Localmente</button>
+          <button class="btn btn-primary" onclick="descargarJSON()">📥 Descargar Respaldo JSON</button>
+        </div>
+
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 8px;">
+          <div style="font-weight: bold; font-size: 13px; margin-bottom: 4px;">Restaurar desde archivo JSON:</div>
+          <input type="file" id="fileImportJSON" accept=".json" onchange="cargarJSON(event)" style="padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; width: 100%;">
+        </div>
+      </div>
+
+      <!-- Enlace a Versión Moderna -->
+      <div class="card" style="background-color: #eef2ff; border-color: #c7d2fe;">
+        <div class="card-title" style="color: #312e81;">
+          <span>🖥️ Versión de Escritorio y Celulares Modernos</span>
+        </div>
+        <p style="font-size: 12px; color: #3730a3; margin-bottom: 10px;">
+          Si estás en una computadora o celular reciente y quieres utilizar la interfaz moderna con Gemini AI, puedes abrirla aquí:
+        </p>
+        <a href="index.html?modern=1" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
+          Abrir Versión Moderna Completa
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT OPERATIVO EN ES5 PURO (100% Compatible con Safari 9 / iOS 9.3.5) -->
+  <script>
+    /* Polyfills básicos para Safari 9 */
+    if (!Date.now) {
+      Date.now = function() { return new Date().getTime(); };
+    }
+    if (!Array.prototype.indexOf) {
+      Array.prototype.indexOf = function(val, from) {
+        var len = this.length >>> 0;
+        from = Number(from) || 0;
+        from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+        if (from < 0) from += len;
+        for (; from < len; from++) {
+          if (from in this && this[from] === val) return from;
+        }
+        return -1;
+      };
+    }
+
+    var STORAGE_KEY = "control_docente_workspace_v3";
+
+    // Variables de Estado
+    var workspace = null;
+    var asignaturaActiva = "";
+    var grupoActivo = "";
+    var fechaSesion = "";
+    var actividadSeleccionadaId = "";
+
+    // Defaults iniciales idénticos a la app principal
+    var DEFAULT_ASIGNATURAS = [
+      "Taller de Ciencias II",
+      "Actividades Artísticas y Culturales"
+    ];
+    var DEFAULT_GRUPOS = [
+      "3° A", "3° B", "3° C", "3° D", "3° E"
+    ];
+    var DEFAULT_ALUMNOS = {
+      "3° A": [
+        { num: 1, nombre: "García Morales Sofía" },
+        { num: 2, nombre: "López Hernández Mateo" },
+        { num: 3, nombre: "Martínez Silva Valentina" },
+        { num: 4, nombre: "Rodríguez Torres Emiliano" },
+        { num: 5, nombre: "Sánchez Díaz Regina" }
+      ],
+      "3° B": [
+        { num: 1, nombre: "Álvarez Reyes Santiago" },
+        { num: 2, nombre: "Castro Mendoza Camila" },
+        { num: 3, nombre: "Gómez Cruz Leonardo" }
+      ],
+      "3° C": [
+        { num: 1, nombre: "Fernández Ortiz Valeria" },
+        { num: 2, nombre: "Hernández Ruiz Diego" }
+      ],
+      "3° D": [
+        { num: 1, nombre: "Díaz Morales Sebastián" },
+        { num: 2, nombre: "Torres Peña Renata" }
+      ],
+      "3° E": [
+        { num: 1, nombre: "Ramírez Flores Iker" },
+        { num: 2, nombre: "Vargas Luna Jimena" }
+      ]
+    };
+
+    function mostrarToast(mensaje) {
+      var toast = document.getElementById("toast");
+      if (!toast) return;
+      toast.innerHTML = mensaje;
+      toast.style.display = "block";
+      setTimeout(function() {
+        toast.style.display = "none";
+      }, 2500);
+    }
+
+    // Inicialización al cargar la página
+    function init() {
+      // 1. Obtener fecha local de hoy
+      var hoy = new Date();
+      var m = (hoy.getMonth() + 1);
+      var d = hoy.getDate();
+      var mm = m < 10 ? "0" + m : "" + m;
+      var dd = d < 10 ? "0" + d : "" + d;
+      fechaSesion = hoy.getFullYear() + "-" + mm + "-" + dd;
+      document.getElementById("txtFecha").value = fechaSesion;
+
+      // 2. Cargar workspace desde localStorage
+      cargarWorkspace();
+
+      // 3. Poblar selectores
+      poblarSelectores();
+
+      // 4. Renderizar vista activa
+      renderAsistencia();
+    }
+
+    function cargarWorkspace() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          workspace = JSON.parse(raw);
+        }
+      } catch (e) {
+        console.error("Error al leer localStorage", e);
+      }
+
+      if (!workspace) {
+        workspace = {
+          version: 1,
+          updatedAt: new Date().toISOString(),
+          teacherName: "Ing. Geól. Ernesto Amando Fuentes Martínez",
+          nombreEscuela: "Bachillerato General Multidisciplinario",
+          zonaHoraria: "auto",
+          tiempoLimiteBanio: 5,
+          catalogoAsignaturas: DEFAULT_ASIGNATURAS,
+          catalogoGrupos: DEFAULT_GRUPOS,
+          alumnosPorGrupo: DEFAULT_ALUMNOS,
+          actividades: [
+            {
+              id: "act_init_1",
+              tipo: "Actividades en Aula / Casa",
+              titulo: "Leyes de los Gases y Termodinámica",
+              fecha: fechaSesion,
+              fechaAsignada: fechaSesion,
+              escalaTipo: "proporcional_1",
+              escalaMax: 10,
+              asignatura: "Taller de Ciencias II",
+              grupo: "3° A",
+              parcial: 1
+            }
+          ],
+          calificaciones: {},
+          asistenciasHistorial: {},
+          indisciplinas: [],
+          banioLog: [],
+          numParciales: 3,
+          parcialActivo: 1
+        };
+        guardarWorkspace();
+      }
+
+      // Asegurar arrays y objetos
+      if (!workspace.catalogoAsignaturas) workspace.catalogoAsignaturas = DEFAULT_ASIGNATURAS;
+      if (!workspace.catalogoGrupos) workspace.catalogoGrupos = DEFAULT_GRUPOS;
+      if (!workspace.alumnosPorGrupo) workspace.alumnosPorGrupo = DEFAULT_ALUMNOS;
+      if (!workspace.asistenciasHistorial) workspace.asistenciasHistorial = {};
+      if (!workspace.actividades) workspace.actividades = [];
+      if (!workspace.calificaciones) workspace.calificaciones = {};
+      if (!workspace.indisciplinas) workspace.indisciplinas = [];
+      if (!workspace.banioLog) workspace.banioLog = [];
+
+      asignaturaActiva = workspace.catalogoAsignaturas[0] || "Taller de Ciencias II";
+      grupoActivo = workspace.catalogoGrupos[0] || "3° A";
+
+      if (workspace.nombreEscuela) {
+        document.getElementById("lblEscuela").innerText = workspace.nombreEscuela;
+      }
+    }
+
+    function guardarWorkspace() {
+      try {
+        workspace.updatedAt = new Date().toISOString();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(workspace));
+      } catch (e) {
+        console.error("Error guardando workspace", e);
+      }
+    }
+
+    function guardarTodoManual() {
+      guardarWorkspace();
+      mostrarToast("✓ Datos guardados exitosamente en memoria local.");
+    }
+
+    function poblarSelectores() {
+      var selAsig = document.getElementById("selAsignatura");
+      selAsig.innerHTML = "";
+      for (var i = 0; i < workspace.catalogoAsignaturas.length; i++) {
+        var opt = document.createElement("option");
+        opt.value = workspace.catalogoAsignaturas[i];
+        opt.text = workspace.catalogoAsignaturas[i];
+        if (opt.value === asignaturaActiva) opt.selected = true;
+        selAsig.appendChild(opt);
+      }
+
+      var selGrp = document.getElementById("selGrupo");
+      selGrp.innerHTML = "";
+      for (var j = 0; j < workspace.catalogoGrupos.length; j++) {
+        var optG = document.createElement("option");
+        optG.value = workspace.catalogoGrupos[j];
+        optG.text = workspace.catalogoGrupos[j];
+        if (optG.value === grupoActivo) optG.selected = true;
+        selGrp.appendChild(optG);
+      }
+
+      // Poblar selector de alumnos para Baño y Fichas
+      poblarAlumnosSelectores();
+    }
+
+    function poblarAlumnosSelectores() {
+      var lista = workspace.alumnosPorGrupo[grupoActivo] || [];
+      var selB = document.getElementById("selAlumnoBanio");
+      var selF = document.getElementById("selAlumnoFicha");
+      selB.innerHTML = "";
+      selF.innerHTML = "";
+
+      for (var i = 0; i < lista.length; i++) {
+        var al = lista[i];
+        var o1 = document.createElement("option");
+        o1.value = al.nombre;
+        o1.text = "#" + al.num + " - " + al.nombre;
+        selB.appendChild(o1);
+
+        var o2 = document.createElement("option");
+        o2.value = al.nombre;
+        o2.text = "#" + al.num + " - " + al.nombre;
+        selF.appendChild(o2);
+      }
+    }
+
+    function cambiarAsignatura() {
+      asignaturaActiva = document.getElementById("selAsignatura").value;
+      renderVistaActiva();
+    }
+
+    function cambiarGrupo() {
+      grupoActivo = document.getElementById("selGrupo").value;
+      poblarAlumnosSelectores();
+      renderVistaActiva();
+    }
+
+    function cambiarFecha() {
+      fechaSesion = document.getElementById("txtFecha").value;
+      renderVistaActiva();
+    }
+
+    function setHoy() {
+      var hoy = new Date();
+      var m = (hoy.getMonth() + 1);
+      var d = hoy.getDate();
+      var mm = m < 10 ? "0" + m : "" + m;
+      var dd = d < 10 ? "0" + d : "" + d;
+      fechaSesion = hoy.getFullYear() + "-" + mm + "-" + dd;
+      document.getElementById("txtFecha").value = fechaSesion;
+      renderVistaActiva();
+    }
+
+    function getAttendanceKey() {
+      return "asist_" + asignaturaActiva + "_" + grupoActivo + "_" + fechaSesion;
+    }
+
+    function getAttendanceData() {
+      var key = getAttendanceKey();
+      if (!workspace.asistenciasHistorial[key]) {
+        workspace.asistenciasHistorial[key] = {
+          entrada: {},
+          salida: {},
+          part: {},
+          timestamps: {}
+        };
+      }
+      return workspace.asistenciasHistorial[key];
+    }
+
+    // RENDER: ASISTENCIA
+    function renderAsistencia() {
+      var lista = workspace.alumnosPorGrupo[grupoActivo] || [];
+      var att = getAttendanceData();
+      var container = document.getElementById("listaAlumnosAsistencia");
+      container.innerHTML = "";
+
+      document.getElementById("txtSesionInfo").innerText = asignaturaActiva + " (" + grupoActivo + ") · " + fechaSesion;
+
+      var p = 0, f = 0, r = 0, j = 0;
+
+      for (var i = 0; i < lista.length; i++) {
+        var al = lista[i];
+        var st = att.entrada[al.nombre] || "";
+        var pt = att.part[al.nombre] || 0;
+
+        if (st === "P") p++;
+        else if (st === "F") f++;
+        else if (st === "R") r++;
+        else if (st === "J") j++;
+
+        var row = document.createElement("div");
+        row.className = "student-row";
+
+        var info = document.createElement("div");
+        info.className = "student-info";
+        info.innerHTML = "<span class='student-num'>#" + al.num + "</span><span class='student-name'>" + al.nombre + "</span>";
+        row.appendChild(info);
+
+        // Botones P F R J
+        var btnGroup = document.createElement("div");
+        btnGroup.className = "att-buttons";
+
+        var btnP = document.createElement("button");
+        btnP.className = "att-btn" + (st === "P" ? " active-p" : "");
+        btnP.innerText = "P";
+        btnP.onclick = (function(nom) { return function() { setEstado(nom, "P"); }; })(al.nombre);
+
+        var btnF = document.createElement("button");
+        btnF.className = "att-btn" + (st === "F" ? " active-f" : "");
+        btnF.innerText = "F";
+        btnF.onclick = (function(nom) { return function() { setEstado(nom, "F"); }; })(al.nombre);
+
+        var btnR = document.createElement("button");
+        btnR.className = "att-btn" + (st === "R" ? " active-r" : "");
+        btnR.innerText = "R";
+        btnR.onclick = (function(nom) { return function() { setEstado(nom, "R"); }; })(al.nombre);
+
+        var btnJ = document.createElement("button");
+        btnJ.className = "att-btn" + (st === "J" ? " active-j" : "");
+        btnJ.innerText = "J";
+        btnJ.onclick = (function(nom) { return function() { setEstado(nom, "J"); }; })(al.nombre);
+
+        btnGroup.appendChild(btnP);
+        btnGroup.appendChild(btnF);
+        btnGroup.appendChild(btnR);
+        btnGroup.appendChild(btnJ);
+        row.appendChild(btnGroup);
+
+        // Contador de participaciones
+        var partBox = document.createElement("div");
+        partBox.className = "part-box";
+
+        var pMinus = document.createElement("button");
+        pMinus.className = "part-btn";
+        pMinus.innerText = "-";
+        pMinus.onclick = (function(nom) { return function() { sumarPart(nom, -1); }; })(al.nombre);
+
+        var pCount = document.createElement("span");
+        pCount.className = "part-count";
+        pCount.innerText = pt;
+
+        var pPlus = document.createElement("button");
+        pPlus.className = "part-btn";
+        pPlus.innerText = "+";
+        pPlus.onclick = (function(nom) { return function() { sumarPart(nom, 1); }; })(al.nombre);
+
+        partBox.appendChild(pMinus);
+        partBox.appendChild(pCount);
+        partBox.appendChild(pPlus);
+        row.appendChild(partBox);
+
+        container.appendChild(row);
+      }
+
+      // Actualizar contadores
+      document.getElementById("cntP").innerText = p;
+      document.getElementById("cntF").innerText = f;
+      document.getElementById("cntR").innerText = r;
+      document.getElementById("cntJ").innerText = j;
+      document.getElementById("cntTotal").innerText = lista.length;
+    }
+
+    function setEstado(alumno, nuevoEstado) {
+      var att = getAttendanceData();
+      var actual = att.entrada[alumno];
+      if (actual === nuevoEstado) {
+        delete att.entrada[alumno];
+      } else {
+        att.entrada[alumno] = nuevoEstado;
+      }
+      if (!att.timestamps) att.timestamps = {};
+      att.timestamps[alumno] = Date.now();
+      guardarWorkspace();
+      renderAsistencia();
+    }
+
+    function sumarPart(alumno, delta) {
+      var att = getAttendanceData();
+      var actual = att.part[alumno] || 0;
+      var nuevo = actual + delta;
+      if (nuevo < 0) nuevo = 0;
+      att.part[alumno] = nuevo;
+      if (!att.timestamps) att.timestamps = {};
+      att.timestamps[alumno] = Date.now();
+      guardarWorkspace();
+      renderAsistencia();
+    }
+
+    function marcarTodosPresente() {
+      var lista = workspace.alumnosPorGrupo[grupoActivo] || [];
+      var att = getAttendanceData();
+      var now = Date.now();
+      if (!att.timestamps) att.timestamps = {};
+
+      for (var i = 0; i < lista.length; i++) {
+        var nom = lista[i].nombre;
+        if (!att.entrada[nom] || att.entrada[nom] === "F") {
+          att.entrada[nom] = "P";
+          att.timestamps[nom] = now;
+        }
+      }
+      guardarWorkspace();
+      renderAsistencia();
+      mostrarToast("✓ Todos marcados como Presente.");
+    }
+
+    function limpiarAsistenciaDia() {
+      if (confirm("¿Deseas reiniciar la lista de asistencia de este grupo para hoy?")) {
+        var key = getAttendanceKey();
+        workspace.asistenciasHistorial[key] = {
+          entrada: {},
+          salida: {},
+          part: {},
+          timestamps: {}
+        };
+        guardarWorkspace();
+        renderAsistencia();
+        mostrarToast("Asistencia del día reiniciada.");
+      }
+    }
+
+    // RENDER: ACTIVIDADES
+    function renderActividades() {
+      var sel = document.getElementById("selActividadActiva");
+      sel.innerHTML = "";
+
+      var filtradas = [];
+      for (var i = 0; i < workspace.actividades.length; i++) {
+        var act = workspace.actividades[i];
+        if ((!act.asignatura || act.asignatura === asignaturaActiva) &&
+            (!act.grupo || act.grupo === grupoActivo)) {
+          filtradas.push(act);
+        }
+      }
+
+      if (filtradas.length === 0) {
+        var optVacia = document.createElement("option");
+        optVacia.value = "";
+        optVacia.text = "Sin actividades registradas en este grupo";
+        sel.appendChild(optVacia);
+        document.getElementById("listaCalificacionesAlumnos").innerHTML = "<div style='padding:20px; text-align:center; color:#64748b;'>No hay actividades aún. Presiona '+ Nueva Actividad' arriba para crear una.</div>";
+        document.getElementById("lblActividadDetalle").innerText = "Sin actividad seleccionada";
+        return;
+      }
+
+      if (!actividadSeleccionadaId || !buscarActividad(actividadSeleccionadaId)) {
+        actividadSeleccionadaId = filtradas[0].id;
+      }
+
+      for (var j = 0; j < filtradas.length; j++) {
+        var item = filtradas[j];
+        var op = document.createElement("option");
+        op.value = item.id;
+        op.text = item.titulo + " (" + item.tipo + " - Max: " + item.escalaMax + ")";
+        if (item.id === actividadSeleccionadaId) op.selected = true;
+        sel.appendChild(op);
+      }
+
+      renderCalificaciones();
+    }
+
+    function buscarActividad(id) {
+      for (var i = 0; i < workspace.actividades.length; i++) {
+        if (workspace.actividades[i].id === id) return workspace.actividades[i];
+      }
+      return null;
+    }
+
+    function renderCalificaciones() {
+      var sel = document.getElementById("selActividadActiva");
+      actividadSeleccionadaId = sel.value;
+      var act = buscarActividad(actividadSeleccionadaId);
+      var container = document.getElementById("listaCalificacionesAlumnos");
+      container.innerHTML = "";
+
+      if (!act) {
+        document.getElementById("lblActividadDetalle").innerText = "Selecciona una actividad";
+        return;
+      }
+
+      document.getElementById("lblActividadDetalle").innerText = act.titulo + " (Escala: " + act.escalaMax + ")";
+
+      if (!workspace.calificaciones[act.id]) {
+        workspace.calificaciones[act.id] = {};
+      }
+      var califs = workspace.calificaciones[act.id];
+      var lista = workspace.alumnosPorGrupo[grupoActivo] || [];
+
+      for (var i = 0; i < lista.length; i++) {
+        var al = lista[i];
+        var reg = califs[al.nombre] || { nota: "", entregado: false };
+
+        var row = document.createElement("div");
+        row.className = "student-row";
+
+        var info = document.createElement("div");
+        info.className = "student-info";
+        info.innerHTML = "<span class='student-num'>#" + al.num + "</span><span class='student-name'>" + al.nombre + "</span>";
+        row.appendChild(info);
+
+        var actions = document.createElement("div");
+        actions.style.display = "-webkit-flex";
+        actions.style.display = "flex";
+        actions.style.alignItems = "center";
+        actions.style.gap = "6px";
+
+        // Input de calificación
+        var inp = document.createElement("input");
+        inp.type = "number";
+        inp.min = "0";
+        inp.max = "" + act.escalaMax;
+        inp.step = "any";
+        inp.value = reg.nota !== undefined ? reg.nota : "";
+        inp.placeholder = "0-" + act.escalaMax;
+        inp.style.width = "75px";
+        inp.style.padding = "6px";
+        inp.style.textAlign = "center";
+        inp.style.fontWeight = "bold";
+        inp.onchange = (function(nom, maxVal) {
+          return function(e) {
+            var val = e.target.value;
+            guardarNota(act.id, nom, val);
+          };
+        })(al.nombre, act.escalaMax);
+
+        // Botón rápido de 10
+        var b10 = document.createElement("button");
+        b10.className = "btn btn-light btn-sm";
+        b10.innerText = "✓ " + act.escalaMax;
+        b10.onclick = (function(nom, valMax) {
+          return function() {
+            guardarNota(act.id, nom, valMax);
+          };
+        })(al.nombre, act.escalaMax);
+
+        actions.appendChild(inp);
+        actions.appendChild(b10);
+        row.appendChild(actions);
+
+        container.appendChild(row);
+      }
+    }
+
+    function guardarNota(actId, alumno, nota) {
+      if (!workspace.calificaciones[actId]) workspace.calificaciones[actId] = {};
+      var num = parseFloat(nota);
+      if (isNaN(num)) {
+        delete workspace.calificaciones[actId][alumno];
+      } else {
+        workspace.calificaciones[actId][alumno] = {
+          nota: num,
+          entregado: true,
+          fecha: fechaSesion,
+          obs: ""
+        };
+      }
+      guardarWorkspace();
+      renderCalificaciones();
+    }
+
+    function calificarTodos(valor) {
+      var act = buscarActividad(actividadSeleccionadaId);
+      if (!act) return;
+      if (!workspace.calificaciones[act.id]) workspace.calificaciones[act.id] = {};
+      var lista = workspace.alumnosPorGrupo[grupoActivo] || [];
+      var val = parseFloat(valor);
+      if (val > act.escalaMax) val = act.escalaMax;
+
+      for (var i = 0; i < lista.length; i++) {
+        var nom = lista[i].nombre;
+        workspace.calificaciones[act.id][nom] = {
+          nota: val,
+          entregado: true,
+          fecha: fechaSesion,
+          obs: ""
+        };
+      }
+      guardarWorkspace();
+      renderCalificaciones();
+      mostrarToast("✓ Calificación " + val + " asignada a todo el grupo.");
+    }
+
+    function abrirModalCrearActividad() {
+      var tit = prompt("Ingresa el Título de la nueva actividad:", "Actividad en Clase");
+      if (!tit || !tit.trim()) return;
+
+      var escala = prompt("Valor máximo o escala (ejemplo 10, 100, o 1 para firma):", "10");
+      var numEscala = parseFloat(escala) || 10;
+
+      var nueva = {
+        id: "act_" + Date.now(),
+        titulo: tit.trim(),
+        tipo: "Actividades en Aula / Casa",
+        fecha: fechaSesion,
+        fechaAsignada: fechaSesion,
+        escalaTipo: "proporcional_1",
+        escalaMax: numEscala,
+        asignatura: asignaturaActiva,
+        grupo: grupoActivo,
+        parcial: 1
+      };
+
+      workspace.actividades.push(nueva);
+      actividadSeleccionadaId = nueva.id;
+      guardarWorkspace();
+      renderActividades();
+      mostrarToast("✓ Nueva actividad creada: " + nueva.titulo);
+    }
+
+    // RENDER: CONTROL DE BAÑO
+    function renderBanio() {
+      var activosDiv = document.getElementById("listaBanioActivos");
+      var histDiv = document.getElementById("listaBanioHistorial");
+      activosDiv.innerHTML = "";
+      histDiv.innerHTML = "";
+
+      var ahora = new Date();
+      var nowMin = ahora.getHours() * 60 + ahora.getMinutes();
+
+      var hayActivos = false;
+      var hayHist = false;
+
+      for (var i = workspace.banioLog.length - 1; i >= 0; i--) {
+        var reg = workspace.banioLog[i];
+        if (reg.fecha !== fechaSesion) continue;
+
+        if (reg.activo) {
+          hayActivos = true;
+          var partes = reg.horaSalida.split(":");
+          var salMin = parseInt(partes[0], 10) * 60 + parseInt(partes[1], 10);
+          var elapsed = nowMin - salMin;
+          if (elapsed < 0) elapsed = 0;
+          var excedido = elapsed > (workspace.tiempoLimiteBanio || 5);
+
+          var itemA = document.createElement("div");
+          itemA.style.padding = "10px 8px";
+          itemA.style.borderBottom = "1px solid #e2e8f0";
+          itemA.style.display = "-webkit-flex";
+          itemA.style.display = "flex";
+          itemA.style.justifyContent = "space-between";
+          itemA.style.alignItems = "center";
+
+          var leftA = document.createElement("div");
+          leftA.innerHTML = "<strong>" + reg.alumno + "</strong> (" + reg.grupo + ")<br>" +
+            "<span style='font-size:12px; color:#64748b;'>Salió: " + reg.horaSalida + " · </span>" +
+            "<span class='timer-badge " + (excedido ? "timer-exceeded" : "timer-normal") + "'>" + elapsed + " min transcurridos</span>";
+
+          var btnRegreso = document.createElement("button");
+          btnRegreso.className = "btn btn-success btn-sm";
+          btnRegreso.innerText = "Marcar Regreso";
+          btnRegreso.onclick = (function(idx) {
+            return function() { marcarRegresoBanio(idx); };
+          })(i);
+
+          itemA.appendChild(leftA);
+          itemA.appendChild(btnRegreso);
+          activosDiv.appendChild(itemA);
+        } else {
+          hayHist = true;
+          var itemH = document.createElement("div");
+          itemH.style.padding = "6px 8px";
+          itemH.style.fontSize = "13px";
+          itemH.style.borderBottom = "1px solid #f1f5f9";
+          itemH.innerHTML = "<strong>" + reg.alumno + "</strong> (" + reg.grupo + "): " +
+            reg.horaSalida + " a " + (reg.horaRegreso || "--") + " (" + reg.minutos + " min) " +
+            (reg.excedido ? "<span style='color:#dc2626; font-weight:bold;'>⚠️ Excedió tiempo</span>" : "<span style='color:#059669;'>✓ A tiempo</span>");
+          histDiv.appendChild(itemH);
+        }
+      }
+
+      if (!hayActivos) {
+        activosDiv.innerHTML = "<div style='color:#64748b; font-size:13px; padding:8px;'>Ningún alumno se encuentra en sanitarios actualmente.</div>";
+      }
+      if (!hayHist) {
+        histDiv.innerHTML = "<div style='color:#64748b; font-size:13px; padding:8px;'>No hay registros de salidas previas el día de hoy.</div>";
+      }
+    }
+
+    function registrarSalidaBanio() {
+      var al = document.getElementById("selAlumnoBanio").value;
+      if (!al) return;
+
+      var ahora = new Date();
+      var hh = ahora.getHours();
+      var mm = ahora.getMinutes();
+      var horaStr = (hh < 10 ? "0" + hh : hh) + ":" + (mm < 10 ? "0" + mm : mm);
+
+      var nuevo = {
+        id: "banio_" + Date.now(),
+        alumno: al,
+        grupo: grupoActivo,
+        asignatura: asignaturaActiva,
+        fecha: fechaSesion,
+        horaSalida: horaStr,
+        horaRegreso: null,
+        minutos: 0,
+        activo: true,
+        excedido: false
+      };
+
+      workspace.banioLog.push(nuevo);
+      guardarWorkspace();
+      renderBanio();
+      mostrarToast("🚹 Salida registrada: " + al + " a las " + horaStr);
+    }
+
+    function marcarRegresoBanio(indice) {
+      var reg = workspace.banioLog[indice];
+      if (!reg) return;
+
+      var ahora = new Date();
+      var hh = ahora.getHours();
+      var mm = ahora.getMinutes();
+      var horaRegStr = (hh < 10 ? "0" + hh : hh) + ":" + (mm < 10 ? "0" + mm : mm);
+
+      var partes = reg.horaSalida.split(":");
+      var salMin = parseInt(partes[0], 10) * 60 + parseInt(partes[1], 10);
+      var regMin = hh * 60 + mm;
+      var total = regMin - salMin;
+      if (total < 1) total = 1;
+
+      reg.horaRegreso = horaRegStr;
+      reg.minutos = total;
+      reg.activo = false;
+      reg.excedido = total > (workspace.tiempoLimiteBanio || 5);
+
+      guardarWorkspace();
+      renderBanio();
+      mostrarToast("✓ Regreso marcado para " + reg.alumno + " (" + total + " min)");
+    }
+
+    // RENDER: REPORTES Y FICHAS
+    function renderFichaDetalle() {
+      var alNom = document.getElementById("selAlumnoFicha").value;
+      var container = document.getElementById("detalleFichaAlumno");
+      container.innerHTML = "";
+
+      if (!alNom) {
+        container.innerHTML = "<div class='card'>Selecciona un alumno para consultar sus estadísticas.</div>";
+        return;
+      }
+
+      // Calcular estadísticas de asistencia acumuladas
+      var totalP = 0, totalF = 0, totalR = 0, totalJ = 0, totalPart = 0;
+      for (var key in workspace.asistenciasHistorial) {
+        if (workspace.asistenciasHistorial.hasOwnProperty(key)) {
+          var item = workspace.asistenciasHistorial[key];
+          if (item && item.entrada && item.entrada[alNom]) {
+            var st = item.entrada[alNom];
+            if (st === "P") totalP++;
+            else if (st === "F") totalF++;
+            else if (st === "R") totalR++;
+            else if (st === "J") totalJ++;
+          }
+          if (item && item.part && item.part[alNom]) {
+            totalPart += item.part[alNom];
+          }
+        }
+      }
+
+      var totalSesiones = totalP + totalF + totalR + totalJ;
+      var pctAsistencia = totalSesiones > 0 ? Math.round((totalP / totalSesiones) * 100) : 100;
+
+      // Calcular promedio de actividades
+      var sumaNotas = 0, cntNotas = 0;
+      for (var actId in workspace.calificaciones) {
+        if (workspace.calificaciones.hasOwnProperty(actId)) {
+          var califs = workspace.calificaciones[actId];
+          if (califs && califs[alNom] && califs[alNom].nota !== undefined && califs[alNom].nota !== "") {
+            sumaNotas += parseFloat(califs[alNom].nota);
+            cntNotas++;
+          }
+        }
+      }
+      var promedio = cntNotas > 0 ? (sumaNotas / cntNotas).toFixed(1) : "N/A";
+
+      // Visitas a baño
+      var salidasBanio = 0, minutosBanio = 0;
+      for (var b = 0; b < workspace.banioLog.length; b++) {
+        if (workspace.banioLog[b].alumno === alNom) {
+          salidasBanio++;
+          minutosBanio += (workspace.banioLog[b].minutos || 0);
+        }
+      }
+
+      // Reportes de indisciplina
+      var reportes = [];
+      for (var ind = 0; ind < workspace.indisciplinas.length; ind++) {
+        if (workspace.indisciplinas[ind].alumno === alNom) {
+          reportes.push(workspace.indisciplinas[ind]);
+        }
+      }
+
+      var card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = "<h3 style='font-size:16px; margin-bottom:8px; color:#1e1b4b;'>" + alNom + " (" + grupoActivo + ")</h3>" +
+        "<div class='metrics-bar' style='margin-bottom:10px;'>" +
+          "<div class='metric-item'><div class='metric-num' style='color:#10b981;'>" + pctAsistencia + "%</div><div class='metric-label'>Asistencia</div></div>" +
+          "<div class='metric-item'><div class='metric-num' style='color:#ef4444;'>" + totalF + "</div><div class='metric-label'>Faltas</div></div>" +
+          "<div class='metric-item'><div class='metric-num' style='color:#4338ca;'>" + promedio + "</div><div class='metric-label'>Promedio</div></div>" +
+          "<div class='metric-item'><div class='metric-num' style='color:#d97706;'>" + totalPart + "</div><div class='metric-label'>Particip.</div></div>" +
+        "</div>" +
+        "<div style='font-size:12px; color:#475569; margin-bottom:10px; line-height:1.6;'>" +
+          "• Sesiones registradas: " + totalSesiones + " (Presentes: " + totalP + ", Retardos: " + totalR + ", Justificados: " + totalJ + ")<br>" +
+          "• Salidas al baño acumuladas: " + salidasBanio + " (" + minutosBanio + " min totales)<br>" +
+          "• Incidencias de conducta: " + reportes.length +
+        "</div>";
+
+      if (reportes.length > 0) {
+        var repDiv = document.createElement("div");
+        repDiv.style.borderTop = "1px solid #e2e8f0";
+        repDiv.style.paddingTop = "8px";
+        repDiv.style.marginTop = "8px";
+        repDiv.innerHTML = "<strong style='font-size:12px; color:#b91c1c;'>Historial de Reportes de Conducta:</strong>";
+        for (var r = 0; r < reportes.length; r++) {
+          var rItem = document.createElement("div");
+          rItem.style.fontSize = "12px";
+          rItem.style.padding = "4px 0";
+          rItem.style.borderBottom = "1px dashed #f1f5f9";
+          rItem.innerHTML = "<strong>" + reportes[r].fecha + " (" + reportes[r].hora + ")</strong>: " +
+            reportes[r].falta + " - <em>" + reportes[r].detalles + "</em>";
+          repDiv.appendChild(rItem);
+        }
+        card.appendChild(repDiv);
+      }
+
+      container.appendChild(card);
+    }
+
+    function guardarIndisciplina() {
+      var alNom = document.getElementById("selAlumnoFicha").value;
+      var falta = document.getElementById("txtFaltaTipo").value;
+      var detalles = document.getElementById("txtFaltaDetalles").value;
+
+      if (!alNom) {
+        alert("Selecciona un alumno.");
+        return;
+      }
+
+      var ahora = new Date();
+      var hh = ahora.getHours();
+      var mm = ahora.getMinutes();
+      var horaStr = (hh < 10 ? "0" + hh : hh) + ":" + (mm < 10 ? "0" + mm : mm);
+
+      var nuevo = {
+        id: "ind_" + Date.now(),
+        fecha: fechaSesion,
+        hora: horaStr,
+        asignatura: asignaturaActiva,
+        grupo: grupoActivo,
+        alumno: alNom,
+        falta: falta,
+        detalles: detalles || "Sin detalles adicionales",
+        citatorio: "NO"
+      };
+
+      workspace.indisciplinas.push(nuevo);
+      guardarWorkspace();
+      document.getElementById("txtFaltaDetalles").value = "";
+      renderFichaDetalle();
+      mostrarToast("✓ Incidencia guardada para " + alNom);
+    }
+
+    // EXPORTAR E IMPORTAR JSON
+    function descargarJSON() {
+      try {
+        var jsonStr = JSON.stringify(workspace, null, 2);
+        var blob = new Blob([jsonStr], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "control-docente-respaldo-" + fechaSesion + ".json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        mostrarToast("✓ Archivo de respaldo descargado.");
+      } catch (err) {
+        alert("Error al descargar archivo: " + err.message);
+      }
+    }
+
+    function cargarJSON(event) {
+      var file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          var parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.alumnosPorGrupo) {
+            workspace = parsed;
+            guardarWorkspace();
+            poblarSelectores();
+            renderVistaActiva();
+            mostrarToast("✓ Respaldo restaurado correctamente.");
+          } else {
+            alert("El archivo no contiene un formato de respaldo válido.");
+          }
+        } catch (err) {
+          alert("Error al procesar el archivo JSON: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // GESTIÓN DE PESTAÑAS
+    var tabActiva = "asistencia";
+    function cambiarTab(tab) {
+      tabActiva = tab;
+      var tabs = ["asistencia", "actividades", "banio", "fichas", "respaldo"];
+      for (var i = 0; i < tabs.length; i++) {
+        var t = tabs[i];
+        var secId = "sec" + t.charAt(0).toUpperCase() + t.slice(1);
+        var btnId = "tabBtn" + t.charAt(0).toUpperCase() + t.slice(1);
+        var sec = document.getElementById(secId);
+        var btn = document.getElementById(btnId);
+        if (t === tab) {
+          if (sec) sec.style.display = "block";
+          if (btn) btn.className = "nav-tab active";
+        } else {
+          if (sec) sec.style.display = "none";
+          if (btn) btn.className = "nav-tab";
+        }
+      }
+      renderVistaActiva();
+    }
+
+    function renderVistaActiva() {
+      if (tabActiva === "asistencia") renderAsistencia();
+      else if (tabActiva === "actividades") renderActividades();
+      else if (tabActiva === "banio") renderBanio();
+      else if (tabActiva === "fichas") renderFichaDetalle();
+    }
+
+    // Inicializar al cargar el DOM
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  </script>
+</body>
+</html>
